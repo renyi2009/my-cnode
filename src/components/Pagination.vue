@@ -28,7 +28,6 @@ export default {
   },
   methods: {
     changeBtn(page){
-      console.log(page)
       if(typeof page !== "number"){
         switch (page.target.innerText){
           case '上一页':
@@ -61,7 +60,6 @@ export default {
       }
       this.currentPage = page;
       this.$emit('childByValue', this.currentPage)
-
     }
   }
 }

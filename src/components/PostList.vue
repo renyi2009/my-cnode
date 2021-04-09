@@ -6,11 +6,11 @@
     <div class="posts" v-else>
       <ul>
         <li class="post topbar">
-          <a href="#" >全部</a>
-          <a href="#" >精华</a>
-          <a href="#" >分享</a>
-          <a href="#" >问答</a>
-          <a href="#" >招聘</a>
+          <span @click="setTab()" :class="{active: !tab}" >全部</span>
+          <span @click="setTab('good')" :class="{active: tab === 'good'}" >精华</span>
+          <span @click="setTab('share')" :class="{active: tab === 'share'}" >分享</span>
+          <span @click="setTab('ask')" :class="{active: tab === 'ask'}">问答</span>
+          <span @click="setTab('job')" :class="{active: tab === 'job'}">招聘</span>
         </li>
         <li class="post" v-for="post in posts">
           <router-link :to="{
@@ -40,7 +40,6 @@
             {{ post.title }}
           </router-link>
           <span class="last_reply">
-<!--            <img :src="post.replies.author.avatar_url" alt="">-->
             {{ post.create_at | formatDate }}
           </span>
         </li>
@@ -63,18 +62,28 @@ export default {
       isLoading: false,
       posts: [],
       currentPage: 1,
+      tab: null
     }
   },
   components: {
     pagination
   },
   methods: {
+    setTab(tab) {
+      this.tab = tab
+      this.getData()
+    },
     getData() {
+      this.posts = []
+      let params = {
+        page: this.currentPage,
+        limit: 20
+      }
+      if(this.tab) {
+        params.tab = this.tab
+      }
       this.$http.get('https://cnodejs.org/api/v1/topics', {
-        params: {
-          page: this.currentPage,
-          limit: 20
-        }
+        params: params
       })
         .then((res) => {
           if (res.data.success === true) {
@@ -121,28 +130,30 @@ a {
   min-width: 624px;
 }
 
-.topbar {
-  padding: 10px;
-  background-color: #f6f6f6;
-  border-radius: 3px 3px 0 0;
-}
-
-.topbar a {
-  text-decoration: none;
-  cursor: pointer;
-  color: #80bd01;
-  margin: 0 10px;
-}
-
-.topbar .activeA {
+.topbar .active {
   background-color: #80bd01;
   color: #fff;
   padding: 3px 4px;
   border-radius: 3px;
 }
 
+.topbar {
+  padding: 10px;
+  background-color: #f6f6f6;
+  border-radius: 3px 3px 0 0;
+}
+
+.topbar span {
+  text-decoration: none;
+  cursor: pointer;
+  color: #80bd01;
+  margin: 0 10px;
+}
+
+
 .count {
-  padding: 0 5px;
+  display: inline-block;
+  min-width: 75px;
   font-size: 12px;
   text-align: center;
 }
